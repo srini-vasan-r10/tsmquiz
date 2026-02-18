@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TSM STAGE MASTER - STEALTH EDITION</title>
+    <style>
+        body { background: #000520; color: #fff; font-family: 'Arial Black', sans-serif; margin: 0; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; cursor: none; }
+        .screen { width: 95%; max-width: 1400px; text-align: center; display: none; }
+        .active { display: block !important; }
+
+        /* Typography */
+        .gold { color: #f1c40f; }
+        .blue { color: #3498db; }
+        
+        /* Genre Grid */
+        .genre-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 25px; margin-top: 50px; }
+        .genre-box { 
+            background: linear-gradient(145deg, #001f3f, #00152e); 
+            border: 2px solid #3498db; 
+            padding: 40px 10px; 
+            border-radius: 15px; 
+            font-size: 26px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+        }
+        .genre-box:hover { background: #f1c40f; color: #000; border-color: #fff; transform: translateY(-5px); }
+
+        /* Game UI */
+        #timer { font-size: 150px; border: 15px solid #f1c40f; display: inline-block; padding: 10px 60px; border-radius: 100px; font-family: 'Courier New', monospace; min-width: 550px; margin-bottom: 20px; background: #000; }
+        #question { font-size: 44px; background: rgba(0,0,0,0.8); padding: 40px; border-left: 15px solid #f1c40f; text-align: left; margin-bottom: 30px; min-height: 120px; line-height: 1.3; }
+        
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .opt { background: #001f3f; border: 5px solid #3498db; padding: 35px; font-size: 34px; text-align: left; border-radius: 15px; color: #bdc3c7; }
+        .selected { border-color: #f1c40f; background: #004080; color: #fff; transform: scale(1.02); }
+        .correct { background: #27ae60 !important; border-color: #fff !important; color: #fff !important; animation: blink 0.5s infinite alternate; }
+        
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.6; } }
+
+        /* Scorecard */
+        #score-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 10, 40, 0.98); border: 4px solid #f1c40f; padding: 50px; border-radius: 30px; z-index: 3000; display: none; width: 65%; box-shadow: 0 0 100px #000; }
+        table { width: 100%; font-size: 40px; border-collapse: collapse; margin-top: 30px; }
+        th { color: #f1c40f; border-bottom: 5px solid #f1c40f; padding: 20px; }
+        td { padding: 20px; border-bottom: 2px solid #3498db; text-align: center; }
+
+        /* Status Bar */
+        #host-status { position: fixed; bottom: 15px; right: 15px; font-size: 18px; color: #666; font-family: monospace; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div id="title-screen" class="screen active">
+    <h1 style="font-size: 120px;" class="gold">TSM TRIVIA</h1>
+    <h2 style="font-size: 50px; letter-spacing: 15px;" class="blue">2026</h2>
+</div>
+
+<div id="genre-screen" class="screen">
+    <h1 class="gold" style="font-size: 70px;">SELECT CATEGORY</h1>
+    <div class="genre-grid">
+        <div class="genre-box" id="g0">CRICKET</div>
+        <div class="genre-box" id="g1">MOVIES</div>
+        <div class="genre-box" id="g2">FOOTBALL</div>
+        <div class="genre-box" id="g3">SONGS</div>
+        <div class="genre-box" id="g4">KABADDI</div>
+        <div class="genre-box" id="g5">NEWS</div>
+        <div class="genre-box" id="g6">TECH</div>
+        <div class="genre-box" id="g7">BOOKS</div>
+        <div class="genre-box" id="g8">AI</div>
+        <div class="genre-box" id="g9">SCIENCE</div>
+    </div>
+</div>
+
+<div id="game-screen" class="screen">
+    <div id="timer" class="gold">15.000</div>
+    <div id="question"></div>
+    <div class="opt-grid" id="options-grid"></div>
+</div>
+
+<div id="score-card">
+    <h1 class="blue" style="margin:0;">LEADERBOARD</h1>
+    <table id="card-table">
+        <thead><tr><th>RANK</th><th>TEAM</th><th>SCORE</th></tr></thead>
+        <tbody id="card-body"></tbody>
+    </table>
+</div>
+
+<div id="host-status">TEAM: <span id="st-team">-</span></div>
+
+<script>
+    /* 100 QUESTIONS DATA */
+    const db = {
+        "CRICKET": [
+            { q: "Who won the 2011 ODI World Cup?", a: ["India", "Sri Lanka", "Australia", "England"], c: 0 },
+            { q: "Who is known as 'Captain Cool'?", a: ["Kohli", "Rohit", "Dhoni", "Ganguly"], c: 2 },
+            { q: "How many balls in one over?", a: ["5", "6", "8", "10"], c: 1 },
+            { q: "Fastest ODI century?", a: ["AB de Villiers", "Gayle", "Kohli", "Afridi"], c: 0 },
+            { q: "IPL team with 0 titles?", a: ["RR", "SRH", "RCB", "GT"], c: 2 },
+            { q: "First to 10k Test runs?", a: ["Bradman", "Gavaskar", "Tendulkar", "Richards"], c: 1 },
+            { q: "Best ODI bowling figures (8/19)?", a: ["Muralidharan", "Vaas", "McGrath", "Rashid"], c: 1 },
+            { q: "1999 World Cup Man of Tournament?", a: ["Warne", "Klusener", "Dravid", "Waugh"], c: 1 },
+            { q: "Debuted with Ganguly in 1996?", a: ["Laxman", "Dravid", "Kumble", "Srinath"], c: 1 },
+            { q: "Hat-trick in first over of Test?", a: ["Pathan", "Zoysa", "Harbhajan", "Akram"], c: 0 }
+        ],
+        "MOVIES": [
+            { q: "Who directed 'Baahubali'?", a: ["Shankar", "Rajamouli", "Mani Ratnam", "Neel"], c: 1 },
+            { q: "Which actor is 'Superstar'?", a: ["Vijay", "Ajith", "Rajini", "Kamal"], c: 2 },
+            { q: "Sport in 'Ghilli'?", a: ["Cricket", "Football", "Kabaddi", "Volleyball"], c: 2 },
+            { q: "Character 'Rolex' is in?", a: ["Kaithi", "Master", "Vikram", "Leo"], c: 2 },
+            { q: "Music director of 'Roja'?", a: ["Ilaiyaraaja", "ARR", "Deva", "Vidyasagar"], c: 1 },
+            { q: "Chandramukhi remake of?", a: ["Drishyam", "Manichitrathazhu", "Lucifer", "Premam"], c: 1 },
+            { q: "First Tamil 3D film?", a: ["Kuttichathan", "Annai Bhoomi", "2.0", "Kochadaiiyaan"], c: 1 },
+            { q: "First Indian Oscar submission?", a: ["Mother India", "Salaam Bombay", "Lagaan", "Guide"], c: 0 },
+            { q: "Website in 'Anniyan'?", a: ["anniyan.com", "corruptionfree.com", "iyangar.com", "anniyan.org"], c: 0 },
+            { q: "First Tamil film with DTS?", a: ["Indian", "Karuppu Roja", "Sivaji", "Padayappa"], c: 1 }
+        ],
+        "FOOTBALL": [
+            { q: "2022 World Cup Winner?", a: ["France", "Brazil", "Argentina", "Portugal"], c: 2 },
+            { q: "Who is CR7?", a: ["Ronaldo", "Rooney", "Ronaldinho", "Ribery"], c: 0 },
+            { q: "Match duration?", a: ["60m", "90m", "100m", "80m"], c: 1 },
+            { q: "Most UCL titles?", a: ["Barcelona", "Liverpool", "Real Madrid", "Bayern"], c: 2 },
+            { q: "ISL Top Scorer?", a: ["Chhetri", "Ogbeche", "Corominas", "Krishna"], c: 1 },
+            { q: "2014 World Cup Host?", a: ["SA", "Brazil", "Russia", "Germany"], c: 1 },
+            { q: "First World Cup Winner?", a: ["Brazil", "Uruguay", "Argentina", "Italy"], c: 1 },
+            { q: "Most Red Cards?", a: ["Ramos", "Pepe", "Bedoya", "Keane"], c: 2 },
+            { q: "First African Semi-Finalist?", a: ["Ghana", "Senegal", "Cameroon", "Morocco"], c: 3 },
+            { q: "India's Top Scorer?", a: ["Bhutia", "Vijayan", "Chhetri", "Jeje"], c: 2 }
+        ],
+        "SONGS": [
+            { q: "Composed 'Jai Ho'?", a: ["Harris", "ARR", "Yuvan", "Anirudh"], c: 1 },
+            { q: "'Why This Kolaveri Di' Movie?", a: ["3", "Maari", "VIP", "Ethir Neechal"], c: 0 },
+            { q: "'Rockstar' of Tamil music?", a: ["Anirudh", "Yuvan", "GV", "Sana"], c: 0 },
+            { q: "Singer 'Munbe Vaa'?", a: ["Chithra", "Shreya", "Chinmayi", "Sadhana"], c: 1 },
+            { q: "'Enjoy Enjaami' co-singer?", a: ["Arivu", "Sid Sriram", "Pradeep", "Gana Bala"], c: 0 },
+            { q: "Who is 'Isai Gnani'?", a: ["Ilaiyaraaja", "MSV", "Kannadasan", "Vairamuthu"], c: 0 },
+            { q: "Raga of 'Narumugaye'?", a: ["Abheri", "Mohanam", "Reethigowla", "Suddha Dhanyasi"], c: 3 },
+            { q: "Harris Jayaraj debut?", a: ["Minnale", "Majunu", "12B", "Samurai"], c: 0 },
+            { q: "Lyricist 'Neeyum Naanum'?", a: ["Thamarai", "Vairamuthu", "Kabilan", "Vivek"], c: 2 },
+            { q: "Ilaiyaraaja's 1000th film?", a: ["Thaarai Thappattai", "Pithamagan", "Naan Kadavul", "Nizhalgal"], c: 0 }
+        ],
+        "KABADDI": [
+            { q: "Players on court?", a: ["5", "7", "9", "11"], c: 1 },
+            { q: "Half duration?", a: ["15m", "20m", "25m", "10m"], c: 1 },
+            { q: "Origin state?", a: ["TN", "Haryana", "Punjab", "Maharashtra"], c: 0 },
+            { q: "Dubki King?", a: ["Pawan", "Pardeep", "Naveen", "Maninder"], c: 1 },
+            { q: "Season 1 Winner?", a: ["U Mumba", "Jaipur", "Patna", "Bangalore"], c: 1 },
+            { q: "Super Tackle points?", a: ["1", "2", "3", "4"], c: 1 },
+            { q: "Most expensive S10 player?", a: ["Pawan", "Maninder", "Fazel", "Shadloui"], c: 0 },
+            { q: "Max weight (Senior)?", a: ["80kg", "85kg", "75kg", "90kg"], c: 1 },
+            { q: "Most World Cups?", a: ["Iran", "Pakistan", "India", "Bangladesh"], c: 2 },
+            { q: "Bonus Line distance?", a: ["1m", "1.5m", "2m", "0.5m"], c: 0 }
+        ],
+        "NEWS": [
+            { q: "PM of India?", a: ["Rahul", "Modi", "Amit Shah", "Manmohan"], c: 1 },
+            { q: "2024 Olympics Host?", a: ["Tokyo", "Paris", "LA", "London"], c: 1 },
+            { q: "Who bought Twitter?", a: ["Bezos", "Gates", "Musk", "Zuck"], c: 2 },
+            { q: "Moon South Pole Mission?", a: ["Chandrayaan-2", "Chandrayaan-3", "Artemis", "Apollo"], c: 1 },
+            { q: "2024 Oscar Best Actor?", a: ["Murphy", "DiCaprio", "RDJ", "Cooper"], c: 0 },
+            { q: "New NATO member 2024?", a: ["Ukraine", "Sweden", "Finland", "Austria"], c: 1 },
+            { q: "New Parliament Name?", a: ["Central Vista", "Bharat Mandapam", "Kartavya Path", "New Delhi Project"], c: 0 },
+            { q: "UN Secretary-General?", a: ["Ban Ki-moon", "Guterres", "Annan", "Tedros"], c: 1 },
+            { q: "Cannes 2024 Winner?", a: ["Anatomy of a Fall", "Zone of Interest", "Anora", "All We Imagine"], c: 2 },
+            { q: "First Bitcoin Country?", a: ["El Salvador", "Argentina", "Venezuela", "Nigeria"], c: 0 }
+        ],
+        "TECH": [
+            { q: "Google CEO?", a: ["Nadella", "Pichai", "Cook", "Musk"], c: 1 },
+            { q: "iPhone maker?", a: ["Samsung", "Apple", "Nokia", "Sony"], c: 1 },
+            { q: "CPU stands for?", a: ["Central Processing Unit", "Computer Personal Unit", "Central Power Unit", "Control Panel Unit"], c: 0 },
+            { q: "Facebook Founder?", a: ["Jobs", "Gates", "Zuckerberg", "Dorsey"], c: 2 },
+            { q: "HTTP stands for?", a: ["HyperText Transfer Protocol", "High Tech Text Path", "Home Text Type Port", "Hyper Tech Transfer Port"], c: 0 },
+            { q: "Android language?", a: ["Swift", "Kotlin", "Ruby", "PHP"], c: 1 },
+            { q: "First virus?", a: ["Creeper", "ILOVEYOU", "Melissa", "Brain"], c: 0 },
+            { q: "GitHub owner?", a: ["Google", "Microsoft", "Amazon", "Adobe"], c: 1 },
+            { q: "NFT stands for?", a: ["New File Type", "Non-Fungible Token", "Network File Transfer", "No Fee Transaction"], c: 1 },
+            { q: "First programmer?", a: ["Turing", "Babbage", "Lovelace", "Hopper"], c: 2 }
+        ],
+        "BOOKS": [
+            { q: "Harry Potter Author?", a: ["Rowling", "Tolkien", "Martin", "King"], c: 0 },
+            { q: "Thirukkural Author?", a: ["Kambar", "Thiruvalluvar", "Avvaiyar", "Bharathiyar"], c: 1 },
+            { q: "Valmiki wrote?", a: ["Mahabharata", "Ramayana", "Silappatikaram", "Manimekalai"], c: 1 },
+            { q: "Wings of Fire Author?", a: ["Nehru", "Gandhi", "Kalam", "Mandela"], c: 2 },
+            { q: "Ponniyin Selvan Author?", a: ["Sandilyan", "Kalki", "Sujatha", "Jayakanthan"], c: 1 },
+            { q: "Alchemist Author?", a: ["Coelho", "Brown", "Murakami", "Bhagat"], c: 0 },
+            { q: "Longest Epic?", a: ["Iliad", "Odyssey", "Mahabharata", "Ramayana"], c: 2 },
+            { q: "Hamlet Author?", a: ["Shakespeare", "Marlowe", "Dickens", "Hemingway"], c: 0 },
+            { q: "George Orwell Pen Name?", a: ["Twain", "Orwell", "Carroll", "O. Henry"], c: 1 },
+            { q: "Velpari Author?", a: ["Su. Venkatesan", "Jeyamohan", "Charu", "Perumal"], c: 0 }
+        ],
+        "AI": [
+            { q: "AI stands for?", a: ["Auto Image", "Artificial Intelligence", "Advanced Input", "Automated Intel"], c: 1 },
+            { q: "ChatGPT creator?", a: ["Google", "Meta", "OpenAI", "Microsoft"], c: 2 },
+            { q: "Gemini owner?", a: ["Apple", "Amazon", "Google", "IBM"], c: 2 },
+            { q: "OpenAI CEO?", a: ["Musk", "Altman", "Page", "Huang"], c: 1 },
+            { q: "GPT stands for?", a: ["Generative Pre-trained Transformer", "General Processing Tool", "Global Power Tech", "Graphic Process Type"], c: 0 },
+            { q: "Beat 'Go' champion?", a: ["Deep Blue", "AlphaGo", "Watson", "Siri"], c: 1 },
+            { q: "Godfather of AI?", a: ["Hinton", "Turing", "LeCun", "Ng"], c: 0 },
+            { q: "ML Library?", a: ["React", "TensorFlow", "Django", "Flask"], c: 1 },
+            { q: "Human thinking test?", a: ["IQ Test", "Turing Test", "Voight-Kampff", "Mirror"], c: 1 },
+            { q: "AI Chips maker?", a: ["AMD", "Intel", "NVIDIA", "Qualcomm"], c: 2 }
+        ],
+        "SCIENCE": [
+            { q: "Symbol for Water?", a: ["CO2", "H2O", "O2", "NaCl"], c: 1 },
+            { q: "Red Planet?", a: ["Venus", "Mars", "Jupiter", "Saturn"], c: 1 },
+            { q: "Gravity discoverer?", a: ["Einstein", "Newton", "Tesla", "Edison"], c: 1 },
+            { q: "Cell Powerhouse?", a: ["Nucleus", "Ribosome", "Mitochondria", "Lysosome"], c: 2 },
+            { q: "Speed of Light?", a: ["300k km/s", "150k km/s", "1k km/s", "500k km/s"], c: 0 },
+            { q: "Most abundant gas?", a: ["Oxygen", "Nitrogen", "Argon", "CO2"], c: 1 },
+            { q: "Hardest substance?", a: ["Gold", "Iron", "Diamond", "Platinum"], c: 2 },
+            { q: "Indian Space Father?", a: ["Raman", "Sarabhai", "Bhabha", "Kalam"], c: 1 },
+            { q: "pH of water?", a: ["5", "7", "9", "12"], c: 1 },
+            { q: "Atomic No 1?", a: ["Helium", "Hydrogen", "Lithium", "Carbon"], c: 1 }
+        ]
+    };
+
+    /* LOGIC */
+    let globalScores = {}; // Stores all scores { 'A': 100, 'B': 50 }
+    let currentGenre = "";
+    let qIdx = 0;
+    let timerRunning = false;
+    let startTime;
+    let remainingTime = 15;
+    let assignedTeam = null; 
+    let selectedOpt = null;
+    let isRevealed = false;
+
+    // --- DOM ---
+    const timerEl = document.getElementById('timer');
+    const qEl = document.getElementById('question');
+    const gridEl = document.getElementById('options-grid');
+    const statusTeam = document.getElementById('st-team');
+    
+    // --- Genre Selection ---
+    Object.keys(db).forEach((key, idx) => {
+        const btn = document.getElementById(`g${idx}`);
+        if(btn) btn.onclick = () => startGame(key);
+    });
+
+    function startGame(genre) {
+        currentGenre = genre;
+        qIdx = 0;
+        document.getElementById('genre-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        loadQuestion();
+    }
+
+    // --- Game Flow ---
+    function loadQuestion() {
+        isRevealed = false; selectedOpt = null; remainingTime = 15; assignedTeam = null; timerRunning = false;
+        
+        statusTeam.innerText = "-";
+        timerEl.innerText = "15.000";
+        timerEl.style.color = "#f1c40f"; 
+        
+        const qData = db[currentGenre][qIdx];
+        qEl.innerText = `${qIdx + 1}. ${qData.q}`;
+        
+        gridEl.innerHTML = "";
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'opt';
+            div.id = `opt-${i}`;
+            div.innerText = `${i+1}. ${opt}`;
+            gridEl.appendChild(div);
+        });
+
+        startTimer();
+    }
+
+    function startTimer() { startTime = Date.now(); timerRunning = true; requestAnimationFrame(updateTimer); }
+
+    function updateTimer() {
+        if (!timerRunning) return;
+        const elapsed = (Date.now() - startTime) / 1000;
+        remainingTime = Math.max(0, 15 - elapsed);
+        timerEl.innerText = remainingTime.toFixed(3);
+        if (remainingTime <= 0) { timerRunning = false; reveal(); }
+        else requestAnimationFrame(updateTimer);
+    }
+
+    function reveal() {
+        if (isRevealed) return;
+        isRevealed = true; timerRunning = false;
+        const correctIdx = db[currentGenre][qIdx].c;
+        document.getElementById(`opt-${correctIdx}`).classList.add('correct');
+        
+        if (selectedOpt === correctIdx && assignedTeam) {
+            const points = (remainingTime / 15) * 100;
+            if(!globalScores[assignedTeam]) globalScores[assignedTeam] = 0;
+            globalScores[assignedTeam] += points;
+        }
+    }
+
+    function toggleScoreCard() {
+        const card = document.getElementById('score-card');
+        if (card.style.display === 'block') card.style.display = 'none';
+        else {
+            card.style.display = 'block';
+            const body = document.getElementById('card-body');
+            body.innerHTML = "";
+            const teams = Object.keys(globalScores);
+            if(teams.length === 0) {
+                body.innerHTML = "<tr><td colspan='3'>NO SCORES YET</td></tr>";
+                return;
+            }
+            teams.sort((a,b) => globalScores[b] - globalScores[a]);
+            teams.forEach((t, i) => {
+                body.innerHTML += `<tr><td class="gold">${i+1}</td><td class="blue">TEAM ${t}</td><td>${globalScores[t].toFixed(2)}</td></tr>`;
+            });
+        }
+    }
+
+    function finishGenre() {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('genre-screen').classList.add('active');
+    }
+
+    /* KEYBOARD CONTROLS */
+    window.addEventListener('keydown', (e) => {
+        const key = e.key.toUpperCase();
+
+        // Global X for Scoreboard
+        if (key === 'X') { toggleScoreCard(); return; }
+        
+        // F to Finish Genre
+        if (key === 'F' && document.getElementById('game-screen').classList.contains('active')) { finishGenre(); return; }
+
+        // Title Screen
+        if (document.getElementById('title-screen').classList.contains('active')) {
+            if (e.code === 'Enter') { document.getElementById('title-screen').classList.remove('active'); document.getElementById('genre-screen').classList.add('active'); }
+            return;
+        }
+
+        // Genre Screen (0-9)
+        if (document.getElementById('genre-screen').classList.contains('active')) {
+            if (key >= '0' && key <= '9') {
+                let idx = key === '0' ? 9 : parseInt(key) - 1;
+                startGame(Object.keys(db)[idx]);
+            }
+            return;
+        }
+
+        // Game Screen
+        if (document.getElementById('game-screen').classList.contains('active')) {
+            // Space: Pause
+            if (e.code === 'Space') {
+                e.preventDefault();
+                timerRunning = !timerRunning;
+                if (timerRunning) { startTime = Date.now() - (15 - remainingTime) * 1000; timerEl.style.color = "#f1c40f"; requestAnimationFrame(updateTimer); }
+                else timerEl.style.color = "#e74c3c";
+            }
+            // Assign Team (A-Z)
+            if (e.keyCode >= 65 && e.keyCode <= 90) {
+                assignedTeam = key; 
+                statusTeam.innerText = key; 
+            }
+            // 1-4 Select
+            if (['1','2','3','4'].includes(key) && !isRevealed) {
+                selectedOpt = parseInt(key) - 1;
+                document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+                document.getElementById(`opt-${selectedOpt}`).classList.add('selected');
+            }
+            // Enter Reveal/Next
+            if (e.code === 'Enter') {
+                if (!isRevealed) reveal();
+                else { qIdx++; if (qIdx < 10) loadQuestion(); else finishGenre(); }
+            }
+        }
+    });
+</script>
+</body>
+</html>
