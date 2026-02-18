@@ -86,130 +86,129 @@
 <div id="host-status">TEAM: <span id="st-team">-</span></div>
 
 <script>
-    /* 100 QUESTIONS DATA */
+   /* 100 HARD QUESTIONS DATA */
     const db = {
         "CRICKET": [
-            { q: "Who won the 2011 ODI World Cup?", a: ["India", "Sri Lanka", "Australia", "England"], c: 0 },
-            { q: "Who is known as 'Captain Cool'?", a: ["Kohli", "Rohit", "Dhoni", "Ganguly"], c: 2 },
-            { q: "How many balls in one over?", a: ["5", "6", "8", "10"], c: 1 },
-            { q: "Fastest ODI century?", a: ["AB de Villiers", "Gayle", "Kohli", "Afridi"], c: 0 },
-            { q: "IPL team with 0 titles?", a: ["RR", "SRH", "RCB", "GT"], c: 2 },
-            { q: "First to 10k Test runs?", a: ["Bradman", "Gavaskar", "Tendulkar", "Richards"], c: 1 },
-            { q: "Best ODI bowling figures (8/19)?", a: ["Muralidharan", "Vaas", "McGrath", "Rashid"], c: 1 },
-            { q: "1999 World Cup Man of Tournament?", a: ["Warne", "Klusener", "Dravid", "Waugh"], c: 1 },
-            { q: "Debuted with Ganguly in 1996?", a: ["Laxman", "Dravid", "Kumble", "Srinath"], c: 1 },
-            { q: "Hat-trick in first over of Test?", a: ["Pathan", "Zoysa", "Harbhajan", "Akram"], c: 0 }
+            { q: "Who was the first Indian to score a century in T20 Internationals?", a: ["Rohit Sharma", "Virat Kohli", "Suresh Raina", "KL Rahul"], c: 2 },
+            { q: "Which bowler has the best economy rate in IPL history (min 250 balls)?", a: ["Rashid Khan", "Anil Kumble", "Sunil Narine", "Dale Steyn"], c: 0 },
+            { q: "Which team has lost the most IPL finals?", a: ["RCB", "CSK", "Mumbai Indians", "Punjab Kings"], c: 1 },
+            { q: "Who is the only player to take a hat-trick in the T20 World Cup twice?", a: ["Brett Lee", "Curtis Campher", "Kagiso Rabada", "Wanindu Hasaranga"], c: 1 },
+            { q: "What is the highest individual score in a Test match innings by an Indian?", a: ["309", "319", "293", "281"], c: 1 },
+            { q: "Which venue hosted the first-ever pink-ball Test match in India?", a: ["Eden Gardens", "Motera", "Chepauk", "Wankhede"], c: 0 },
+            { q: "Who was the Man of the Series in the 2011 ODI World Cup?", a: ["MS Dhoni", "Gautam Gambhir", "Yuvraj Singh", "Sachin Tendulkar"], c: 2 },
+            { q: "Which cricketer's autobiography is titled 'Playing It My Way'?", a: ["Rahul Dravid", "Sachin Tendulkar", "VVS Laxman", "Sourav Ganguly"], c: 1 },
+            { q: "Against which team did Rohit Sharma score his 264?", a: ["Australia", "South Africa", "Sri Lanka", "West Indies"], c: 2 },
+            { q: "Who holds the record for the fastest Test century (54 balls)?", a: ["Viv Richards", "Brendon McCullum", "Misbah-ul-Haq", "Adam Gilchrist"], c: 1 }
         ],
         "MOVIES": [
-            { q: "Who directed 'Baahubali'?", a: ["Shankar", "Rajamouli", "Mani Ratnam", "Neel"], c: 1 },
-            { q: "Which actor is 'Superstar'?", a: ["Vijay", "Ajith", "Rajini", "Kamal"], c: 2 },
-            { q: "Sport in 'Ghilli'?", a: ["Cricket", "Football", "Kabaddi", "Volleyball"], c: 2 },
-            { q: "Character 'Rolex' is in?", a: ["Kaithi", "Master", "Vikram", "Leo"], c: 2 },
-            { q: "Music director of 'Roja'?", a: ["Ilaiyaraaja", "ARR", "Deva", "Vidyasagar"], c: 1 },
-            { q: "Chandramukhi remake of?", a: ["Drishyam", "Manichitrathazhu", "Lucifer", "Premam"], c: 1 },
-            { q: "First Tamil 3D film?", a: ["Kuttichathan", "Annai Bhoomi", "2.0", "Kochadaiiyaan"], c: 1 },
-            { q: "First Indian Oscar submission?", a: ["Mother India", "Salaam Bombay", "Lagaan", "Guide"], c: 0 },
-            { q: "Website in 'Anniyan'?", a: ["anniyan.com", "corruptionfree.com", "iyangar.com", "anniyan.org"], c: 0 },
-            { q: "First Tamil film with DTS?", a: ["Indian", "Karuppu Roja", "Sivaji", "Padayappa"], c: 1 }
+            { q: "In 'Baashha', what is the name of the antagonist played by Raghuvaran?", a: ["Antony", "Mark Antony", "Periya Bhai", "Sultan"], c: 1 },
+            { q: "Which was the first Tamil film to be shot entirely in digital format?", a: ["Mumbai Express", "Sivaji", "Vishwaroopam", "Saroja"], c: 0 },
+            { q: "What is the name of the village in 'Subramaniapuram'?", a: ["Karisal Kulam", "Subramaniapuram", "Usilampatti", "Seevalaperi"], c: 1 },
+            { q: "In 'Vikram' (1986), what is the name of the missile Vikram tries to retrieve?", a: ["Agni", "Prithvi", "Brahmos", "Agni-putra"], c: 3 },
+            { q: "Who wrote the dialogues for the movie 'Iruvar'?", a: ["Sujatha", "Mani Ratnam", "Vairamuthu", "Balakumaran"], c: 0 },
+            { q: "Which film features the fictional language 'Kiliki'?", a: ["Baahubali", "KGF", "Eega", "Ponniyin Selvan"], c: 0 },
+            { q: "In 'Anniyan', what is the punishment for the train food supplier?", a: ["Kumbhipakam", "Andha Koopam", "Krimi Bhojanam", "Rauravam"], c: 2 },
+            { q: "Who was the cinematographer for 'Nayakan'?", a: ["P.C. Sreeram", "Santosh Sivan", "Rajiv Menon", "Balu Mahendra"], c: 0 },
+            { q: "Which Tamil actor holds the Guinness Record for most screen credits?", a: ["Manorama", "Nagesh", "Kamal Haasan", "M.R. Radha"], c: 0 },
+            { q: "What is the specific car model driven by Karthi in 'Paiyaa'?", a: ["Swift", "Lancer", "Accord", "Benz"], c: 1 }
         ],
         "FOOTBALL": [
-            { q: "2022 World Cup Winner?", a: ["France", "Brazil", "Argentina", "Portugal"], c: 2 },
-            { q: "Who is CR7?", a: ["Ronaldo", "Rooney", "Ronaldinho", "Ribery"], c: 0 },
-            { q: "Match duration?", a: ["60m", "90m", "100m", "80m"], c: 1 },
-            { q: "Most UCL titles?", a: ["Barcelona", "Liverpool", "Real Madrid", "Bayern"], c: 2 },
-            { q: "ISL Top Scorer?", a: ["Chhetri", "Ogbeche", "Corominas", "Krishna"], c: 1 },
-            { q: "2014 World Cup Host?", a: ["SA", "Brazil", "Russia", "Germany"], c: 1 },
-            { q: "First World Cup Winner?", a: ["Brazil", "Uruguay", "Argentina", "Italy"], c: 1 },
-            { q: "Most Red Cards?", a: ["Ramos", "Pepe", "Bedoya", "Keane"], c: 2 },
-            { q: "First African Semi-Finalist?", a: ["Ghana", "Senegal", "Cameroon", "Morocco"], c: 3 },
-            { q: "India's Top Scorer?", a: ["Bhutia", "Vijayan", "Chhetri", "Jeje"], c: 2 }
+            { q: "Which player scored the 'Hand of God' goal?", a: ["Pele", "Maradona", "Messi", "Zidane"], c: 1 },
+            { q: "Which country has appeared in the World Cup finals 3 times but never won?", a: ["Netherlands", "Croatia", "Portugal", "Belgium"], c: 0 },
+            { q: "Who is the all-time top scorer in the history of the FIFA World Cup?", a: ["Ronaldo (R9)", "Miroslav Klose", "Gerd Muller", "Pele"], c: 1 },
+            { q: "Which club is known as 'The Old Lady'?", a: ["Juventus", "Real Madrid", "Hertha Berlin", "Benfica"], c: 0 },
+            { q: "Who was the first goalkeeper to win the Ballon d'Or?", a: ["Oliver Kahn", "Lev Yashin", "Manuel Neuer", "Buffon"], c: 1 },
+            { q: "Which is the only team to have played in every World Cup tournament?", a: ["Germany", "Argentina", "Brazil", "Italy"], c: 2 },
+            { q: "What is the minimum number of players a team needs to start a match?", a: ["7", "8", "9", "11"], c: 0 },
+            { q: "Who scored the winning goal for Spain in the 2010 World Cup Final?", a: ["Xavi", "Torres", "Iniesta", "Villa"], c: 2 },
+            { q: "Which stadium is known as 'The Theatre of Dreams'?", a: ["Anfield", "Wembley", "Old Trafford", "Camp Nou"], c: 2 },
+            { q: "Who managed Leicester City to their miracle Premier League title?", a: ["Claudio Ranieri", "Nigel Pearson", "Brendan Rodgers", "Claude Puel"], c: 0 }
         ],
         "SONGS": [
-            { q: "Composed 'Jai Ho'?", a: ["Harris", "ARR", "Yuvan", "Anirudh"], c: 1 },
-            { q: "'Why This Kolaveri Di' Movie?", a: ["3", "Maari", "VIP", "Ethir Neechal"], c: 0 },
-            { q: "'Rockstar' of Tamil music?", a: ["Anirudh", "Yuvan", "GV", "Sana"], c: 0 },
-            { q: "Singer 'Munbe Vaa'?", a: ["Chithra", "Shreya", "Chinmayi", "Sadhana"], c: 1 },
-            { q: "'Enjoy Enjaami' co-singer?", a: ["Arivu", "Sid Sriram", "Pradeep", "Gana Bala"], c: 0 },
-            { q: "Who is 'Isai Gnani'?", a: ["Ilaiyaraaja", "MSV", "Kannadasan", "Vairamuthu"], c: 0 },
-            { q: "Raga of 'Narumugaye'?", a: ["Abheri", "Mohanam", "Reethigowla", "Suddha Dhanyasi"], c: 3 },
-            { q: "Harris Jayaraj debut?", a: ["Minnale", "Majunu", "12B", "Samurai"], c: 0 },
-            { q: "Lyricist 'Neeyum Naanum'?", a: ["Thamarai", "Vairamuthu", "Kabilan", "Vivek"], c: 2 },
-            { q: "Ilaiyaraaja's 1000th film?", a: ["Thaarai Thappattai", "Pithamagan", "Naan Kadavul", "Nizhalgal"], c: 0 }
+            { q: "In 'Sivaji', which raga is the song 'Sahana' based on?", a: ["Sahana", "Kalyani", "Dwijavanthi", "Sankarabharanam"], c: 2 },
+            { q: "Who sang the male vocals for 'Vaseegara' in Minnale?", a: ["Harish Raghavendra", "Unni Menon", "Srinivas", "Karthik"], c: 0 },
+            { q: "Which song was the first ever Tamil song to reach 1 Billion views on YouTube?", a: ["Rowdy Baby", "Why This Kolaveri", "Vaathi Coming", "Arabic Kuthu"], c: 0 },
+            { q: "For which movie did Yuvan Shankar Raja perform a live orchestra recording in Cyprus?", a: ["Raam", "Pudhupettai", "7G Rainbow Colony", "Ahi Ahi"], c: 0 },
+            { q: "Who wrote the lyrics for 'Senthamizh Nadenum Pothinile'?", a: ["Bharathidasan", "Bharathiyar", "Kannadasan", "Vaali"], c: 1 },
+            { q: "Which A.R. Rahman soundtrack was listed in TIME magazine's '10 Best Soundtracks'?", a: ["Bombay", "Roja", "Dil Se", "Slumdog Millionaire"], c: 1 },
+            { q: "The song 'Urvasi Urvasi' was inspired by which American hit?", a: ["Beat It", "My Humps", "It's Like That", "None"], c: 3 },
+            { q: "Who composed the music for the movie '96'?", a: ["Govind Vasantha", "Santhosh Narayanan", "Pradeep Kumar", "Sean Roldan"], c: 0 },
+            { q: "Which lyricist uses the pen name 'Dravida Iyakkam' in some credits?", a: ["Pa. Ranjith", "Arivu", "Yugabharathi", "Snehan"], c: 2 },
+            { q: "In 'Thiruda Thiruda', the song 'Veerapandi Kotaiyile' features only which instruments?", a: ["Drums", "Vocals & Percussion", "Violin", "Guitar"], c: 1 }
         ],
         "KABADDI": [
-            { q: "Players on court?", a: ["5", "7", "9", "11"], c: 1 },
-            { q: "Half duration?", a: ["15m", "20m", "25m", "10m"], c: 1 },
-            { q: "Origin state?", a: ["TN", "Haryana", "Punjab", "Maharashtra"], c: 0 },
-            { q: "Dubki King?", a: ["Pawan", "Pardeep", "Naveen", "Maninder"], c: 1 },
-            { q: "Season 1 Winner?", a: ["U Mumba", "Jaipur", "Patna", "Bangalore"], c: 1 },
-            { q: "Super Tackle points?", a: ["1", "2", "3", "4"], c: 1 },
-            { q: "Most expensive S10 player?", a: ["Pawan", "Maninder", "Fazel", "Shadloui"], c: 0 },
-            { q: "Max weight (Senior)?", a: ["80kg", "85kg", "75kg", "90kg"], c: 1 },
-            { q: "Most World Cups?", a: ["Iran", "Pakistan", "India", "Bangladesh"], c: 2 },
-            { q: "Bonus Line distance?", a: ["1m", "1.5m", "2m", "0.5m"], c: 0 }
+            { q: "What is the exact dimension of a standard Men's Kabaddi court?", a: ["13m x 10m", "12m x 10m", "13m x 11m", "11m x 9m"], c: 0 },
+            { q: "Who was the first player to cross 1000 raid points in PKL history?", a: ["Pawan Sehrawat", "Rahul Chaudhari", "Pardeep Narwal", "Deepak Hooda"], c: 2 },
+            { q: "Which defensive move involves grabbing the raider's ankle?", a: ["Dash", "Block", "Ankle Hold", "Thigh Hold"], c: 2 },
+            { q: "How many points is a 'Technical Point' worth?", a: ["1", "2", "0", "Discretionary"], c: 0 },
+            { q: "Which Asian Games did India LOSE the Gold medal in Kabaddi for the first time?", a: ["2010", "2014", "2018", "2022"], c: 2 },
+            { q: "What is the maximum weight limit for female Kabaddi players?", a: ["70kg", "75kg", "65kg", "60kg"], c: 1 },
+            { q: "Which team holds the record for the highest score in a single PKL match?", a: ["Patna Pirates", "Bengaluru Bulls", "Dabang Delhi", "Telugu Titans"], c: 1 },
+            { q: "Who is the owner of the Jaipur Pink Panthers?", a: ["Akshay Kumar", "Abhishek Bachchan", "Ronnie Screwvala", "Sachin Tendulkar"], c: 1 },
+            { q: "If a raider is caught but touches the midline, how many points does he get?", a: ["0", "1", "Defenders touched + 2", "Defenders touched"], c: 3 },
+            { q: "In case of a tie in knockouts, what is the tie-breaker called?", a: ["Super Over", "Golden Raid", "Tie Raid", "Extra Time"], c: 1 }
         ],
         "NEWS": [
-            { q: "PM of India?", a: ["Rahul", "Modi", "Amit Shah", "Manmohan"], c: 1 },
-            { q: "2024 Olympics Host?", a: ["Tokyo", "Paris", "LA", "London"], c: 1 },
-            { q: "Who bought Twitter?", a: ["Bezos", "Gates", "Musk", "Zuck"], c: 2 },
-            { q: "Moon South Pole Mission?", a: ["Chandrayaan-2", "Chandrayaan-3", "Artemis", "Apollo"], c: 1 },
-            { q: "2024 Oscar Best Actor?", a: ["Murphy", "DiCaprio", "RDJ", "Cooper"], c: 0 },
-            { q: "New NATO member 2024?", a: ["Ukraine", "Sweden", "Finland", "Austria"], c: 1 },
-            { q: "New Parliament Name?", a: ["Central Vista", "Bharat Mandapam", "Kartavya Path", "New Delhi Project"], c: 0 },
-            { q: "UN Secretary-General?", a: ["Ban Ki-moon", "Guterres", "Annan", "Tedros"], c: 1 },
-            { q: "Cannes 2024 Winner?", a: ["Anatomy of a Fall", "Zone of Interest", "Anora", "All We Imagine"], c: 2 },
-            { q: "First Bitcoin Country?", a: ["El Salvador", "Argentina", "Venezuela", "Nigeria"], c: 0 }
+            { q: "Which article of the Indian Constitution was abrogated in 2019?", a: ["Article 370", "Article 356", "Article 360", "Article 21"], c: 0 },
+            { q: "Who is the current CEO of Twitter (X) appointed by Elon Musk?", a: ["Parag Agrawal", "Linda Yaccarino", "Jack Dorsey", "Sheryl Sandberg"], c: 1 },
+            { q: "Which country became the 31st member of NATO?", a: ["Sweden", "Finland", "Ukraine", "Switzerland"], c: 1 },
+            { q: "What is the name of the cyclone that hit Chennai in Dec 2023?", a: ["Michaung", "Mandous", "Biparjoy", "Mocha"], c: 0 },
+            { q: "Which film won the Best Documentary Short at the 2023 Oscars (Indian)?", a: ["The Elephant Whisperers", "All That Breathes", "RRR", "Period. End of Sentence."], c: 0 },
+            { q: "Who is the current Chief Justice of India (as of 2025)?", a: ["D.Y. Chandrachud", "Sanjiv Khanna", "U.U. Lalit", "N.V. Ramana"], c: 1 },
+            { q: "Which city is hosting the COP29 climate summit?", a: ["Dubai", "Baku", "Glasgow", "Paris"], c: 1 },
+            { q: "What is the name of India's first solar mission?", a: ["Surya-1", "Aditya-L1", "Helios-X", "Sol-India"], c: 1 },
+            { q: "Which country launched the 'Digital Silk Road' initiative?", a: ["India", "USA", "China", "Japan"], c: 2 },
+            { q: "Who won the 2024 Nobel Peace Prize?", a: ["Narges Mohammadi", "Nihon Hidankyo", "World Food Programme", "Maria Ressa"], c: 1 }
         ],
         "TECH": [
-            { q: "Google CEO?", a: ["Nadella", "Pichai", "Cook", "Musk"], c: 1 },
-            { q: "iPhone maker?", a: ["Samsung", "Apple", "Nokia", "Sony"], c: 1 },
-            { q: "CPU stands for?", a: ["Central Processing Unit", "Computer Personal Unit", "Central Power Unit", "Control Panel Unit"], c: 0 },
-            { q: "Facebook Founder?", a: ["Jobs", "Gates", "Zuckerberg", "Dorsey"], c: 2 },
-            { q: "HTTP stands for?", a: ["HyperText Transfer Protocol", "High Tech Text Path", "Home Text Type Port", "Hyper Tech Transfer Port"], c: 0 },
-            { q: "Android language?", a: ["Swift", "Kotlin", "Ruby", "PHP"], c: 1 },
-            { q: "First virus?", a: ["Creeper", "ILOVEYOU", "Melissa", "Brain"], c: 0 },
-            { q: "GitHub owner?", a: ["Google", "Microsoft", "Amazon", "Adobe"], c: 1 },
-            { q: "NFT stands for?", a: ["New File Type", "Non-Fungible Token", "Network File Transfer", "No Fee Transaction"], c: 1 },
-            { q: "First programmer?", a: ["Turing", "Babbage", "Lovelace", "Hopper"], c: 2 }
+            { q: "What was the original name of Google?", a: ["Googol", "BackRub", "SearchMash", "RankDex"], c: 1 },
+            { q: "Which programming language was created by James Gosling?", a: ["C++", "Python", "Java", "Ruby"], c: 2 },
+            { q: "What does 'S' stand for in 'HTTPS'?", a: ["System", "Secure", "Standard", "Service"], c: 1 },
+            { q: "Which company developed the 'Pegasus' spyware?", a: ["DarkMatter", "BlackCube", "NSO Group", "Gamma Group"], c: 2 },
+            { q: "What is the first webcam historically used to monitor?", a: ["A coffee pot", "A fish tank", "A hallway", "A server room"], c: 0 },
+            { q: "Who is the founder of the Linux kernel?", a: ["Steve Wozniak", "Linus Torvalds", "Dennis Ritchie", "Ken Thompson"], c: 1 },
+            { q: "Which company acquired GitHub in 2018?", a: ["Google", "Facebook", "Microsoft", "Amazon"], c: 2 },
+            { q: "What is the maximum supply of Bitcoin that will ever exist?", a: ["21 Million", "18 Million", "25 Million", "Unlimited"], c: 0 },
+            { q: "What does 'BIOS' stand for?", a: ["Basic Input Output System", "Binary Input Operating System", "Base Integrated Operating System", "Boot Input Output System"], c: 0 },
+            { q: "In database terms, what does 'SQL' stand for?", a: ["Standard Query Link", "Structured Query Language", "Simple Question Language", "System Query Logic"], c: 1 }
         ],
         "BOOKS": [
-            { q: "Harry Potter Author?", a: ["Rowling", "Tolkien", "Martin", "King"], c: 0 },
-            { q: "Thirukkural Author?", a: ["Kambar", "Thiruvalluvar", "Avvaiyar", "Bharathiyar"], c: 1 },
-            { q: "Valmiki wrote?", a: ["Mahabharata", "Ramayana", "Silappatikaram", "Manimekalai"], c: 1 },
-            { q: "Wings of Fire Author?", a: ["Nehru", "Gandhi", "Kalam", "Mandela"], c: 2 },
-            { q: "Ponniyin Selvan Author?", a: ["Sandilyan", "Kalki", "Sujatha", "Jayakanthan"], c: 1 },
-            { q: "Alchemist Author?", a: ["Coelho", "Brown", "Murakami", "Bhagat"], c: 0 },
-            { q: "Longest Epic?", a: ["Iliad", "Odyssey", "Mahabharata", "Ramayana"], c: 2 },
-            { q: "Hamlet Author?", a: ["Shakespeare", "Marlowe", "Dickens", "Hemingway"], c: 0 },
-            { q: "George Orwell Pen Name?", a: ["Twain", "Orwell", "Carroll", "O. Henry"], c: 1 },
-            { q: "Velpari Author?", a: ["Su. Venkatesan", "Jeyamohan", "Charu", "Perumal"], c: 0 }
+            { q: "Who wrote the dystopian novel 'Brave New World'?", a: ["George Orwell", "Aldous Huxley", "Ray Bradbury", "H.G. Wells"], c: 1 },
+            { q: "What is the real name of the author 'Lewis Carroll'?", a: ["Charles Dickens", "Charles Lutwidge Dodgson", "Eric Arthur Blair", "Samuel Clemens"], c: 1 },
+            { q: "Which is the first part of the 'Silappatikaram'?", a: ["Madurai Kandam", "Puhar Kandam", "Vanchi Kandam", "Koodal Kandam"], c: 1 },
+            { q: "Who translated 'Thirukkural' into Latin first?", a: ["G.U. Pope", "Constantius Beschi", "Ellis", "Drew"], c: 1 },
+            { q: "In 'Harry Potter', what is the core of the Elder Wand?", a: ["Phoenix Feather", "Dragon Heartstring", "Thestral Hair", "Unicorn Hair"], c: 2 },
+            { q: "Who wrote 'Satanic Verses'?", a: ["Salman Rushdie", "Arundhati Roy", "V.S. Naipaul", "Vikram Seth"], c: 0 },
+            { q: "Which Tamil novel won the first Sahitya Akademi Award?", a: ["Alai Osai", "Agal Vilakku", "Kallukkul Eeram", "Sila Nerangalil Sila Manithargal"], c: 0 },
+            { q: "Who wrote 'The God of Small Things'?", a: ["Jhumpa Lahiri", "Kiran Desai", "Arundhati Roy", "Anita Desai"], c: 2 },
+            { q: "What is the name of the protagonist in 'Crime and Punishment'?", a: ["Raskolnikov", "Ivan", "Dmitri", "Alyosha"], c: 0 },
+            { q: "Which ancient library was known as the 'Storehouse of Knowledge'?", a: ["Library of Alexandria", "Library of Pergamum", "Imperial Library of Constantinople", "House of Wisdom"], c: 0 }
         ],
         "AI": [
-            { q: "AI stands for?", a: ["Auto Image", "Artificial Intelligence", "Advanced Input", "Automated Intel"], c: 1 },
-            { q: "ChatGPT creator?", a: ["Google", "Meta", "OpenAI", "Microsoft"], c: 2 },
-            { q: "Gemini owner?", a: ["Apple", "Amazon", "Google", "IBM"], c: 2 },
-            { q: "OpenAI CEO?", a: ["Musk", "Altman", "Page", "Huang"], c: 1 },
-            { q: "GPT stands for?", a: ["Generative Pre-trained Transformer", "General Processing Tool", "Global Power Tech", "Graphic Process Type"], c: 0 },
-            { q: "Beat 'Go' champion?", a: ["Deep Blue", "AlphaGo", "Watson", "Siri"], c: 1 },
-            { q: "Godfather of AI?", a: ["Hinton", "Turing", "LeCun", "Ng"], c: 0 },
-            { q: "ML Library?", a: ["React", "TensorFlow", "Django", "Flask"], c: 1 },
-            { q: "Human thinking test?", a: ["IQ Test", "Turing Test", "Voight-Kampff", "Mirror"], c: 1 },
-            { q: "AI Chips maker?", a: ["AMD", "Intel", "NVIDIA", "Qualcomm"], c: 2 }
+            { q: "What is the name of the AI model developed by Anthropic?", a: ["Claude", "Bard", "Llama", "Mistral"], c: 0 },
+            { q: "Which test is designed to distinguish computers from humans visually?", a: ["Turing Test", "CAPTCHA", "OCR", "Voight-Kampff"], c: 1 },
+            { q: "Who is the Chief Scientist of OpenAI?", a: ["Sam Altman", "Ilya Sutskever", "Andrej Karpathy", "Yann LeCun"], c: 1 },
+            { q: "In AI, what does 'GAN' stand for?", a: ["General Artificial Network", "Generative Adversarial Network", "Global Automated Node", "Graphic AI Net"], c: 1 },
+            { q: "Which IBM computer defeated Garry Kasparov in Chess?", a: ["Watson", "Deep Blue", "Summit", "Blue Gene"], c: 1 },
+            { q: "What is 'Hallucination' in the context of LLMs?", a: ["System Crash", "Confidently stating false info", "Generating images", "Refusing to answer"], c: 1 },
+            { q: "Which company released the 'Stable Diffusion' model?", a: ["OpenAI", "Midjourney", "Stability AI", "Adobe"], c: 2 },
+            { q: "What is the 'Vanishing Gradient Problem' related to?", a: ["Training Deep Neural Networks", "Image Resolution", "Data Storage", "Battery Life"], c: 0 },
+            { q: "Who wrote the paper 'Attention Is All You Need'?", a: ["Google Researchers", "Facebook AI", "OpenAI Team", "DeepMind"], c: 0 },
+            { q: "Which AI is used to fold proteins?", a: ["AlphaGo", "AlphaFold", "GPT-3", "DALL-E"], c: 1 }
         ],
         "SCIENCE": [
-            { q: "Symbol for Water?", a: ["CO2", "H2O", "O2", "NaCl"], c: 1 },
-            { q: "Red Planet?", a: ["Venus", "Mars", "Jupiter", "Saturn"], c: 1 },
-            { q: "Gravity discoverer?", a: ["Einstein", "Newton", "Tesla", "Edison"], c: 1 },
-            { q: "Cell Powerhouse?", a: ["Nucleus", "Ribosome", "Mitochondria", "Lysosome"], c: 2 },
-            { q: "Speed of Light?", a: ["300k km/s", "150k km/s", "1k km/s", "500k km/s"], c: 0 },
-            { q: "Most abundant gas?", a: ["Oxygen", "Nitrogen", "Argon", "CO2"], c: 1 },
-            { q: "Hardest substance?", a: ["Gold", "Iron", "Diamond", "Platinum"], c: 2 },
-            { q: "Indian Space Father?", a: ["Raman", "Sarabhai", "Bhabha", "Kalam"], c: 1 },
-            { q: "pH of water?", a: ["5", "7", "9", "12"], c: 1 },
-            { q: "Atomic No 1?", a: ["Helium", "Hydrogen", "Lithium", "Carbon"], c: 1 }
+            { q: "What is the rarest blood type in humans?", a: ["AB Negative", "O Negative", "Rh Null", "B Negative"], c: 2 },
+            { q: "Which planet has the most moons (as of 2024)?", a: ["Jupiter", "Saturn", "Uranus", "Neptune"], c: 1 },
+            { q: "What is the value of 'Absolute Zero'?", a: ["0°C", "-273.15°C", "-100°C", "-459°F"], c: 1 },
+            { q: "Who is known as the 'Father of Modern Chemistry'?", a: ["Mendeleev", "Lavoisier", "Dalton", "Bohr"], c: 1 },
+            { q: "Which element has the highest melting point?", a: ["Tungsten", "Carbon", "Titanium", "Platinum"], c: 0 },
+            { q: "What is the name of the first cloned mammal?", a: ["Polly", "Dolly", "Molly", "Holly"], c: 1 },
+            { q: "What particle is known as the 'God Particle'?", a: ["Higgs Boson", "Neutrino", "Quark", "Photon"], c: 0 },
+            { q: "Which part of the brain controls balance?", a: ["Cerebrum", "Cerebellum", "Medulla", "Thalamus"], c: 1 },
+            { q: "What is the hardest material in the human body?", a: ["Bone", "Tooth Enamel", "Cartilage", "Nail"], c: 1 },
+            { q: "Who formulated the 'Uncertainty Principle'?", a: ["Einstein", "Heisenberg", "Schrodinger", "Planck"], c: 1 }
         ]
     };
-
     /* LOGIC */
     let globalScores = {}; // Stores all scores { 'A': 100, 'B': 50 }
     let currentGenre = "";
@@ -366,4 +365,5 @@
     });
 </script>
 </body>
+
 </html>
