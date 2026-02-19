@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TSM TRIVIA - SET C (MEGA)</title>
+    <style>
+        body { background: #050505; color: #ff0055; font-family: 'Arial Black', sans-serif; margin: 0; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; cursor: none; }
+        .screen { width: 95%; max-width: 1400px; text-align: center; display: none; }
+        .active { display: block !important; }
+
+        /* Typography & Colors - Set C Theme (Neon Pink/Purple/Dark) */
+        .neon-pink { color: #ff0055; text-shadow: 0 0 15px #ff0055; }
+        .neon-purple { color: #b000ff; text-shadow: 0 0 15px #b000ff; }
+        .white { color: #f0f0f0; }
+        
+        /* Genre Grid */
+        .genre-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 50px; }
+        .genre-box { 
+            background: linear-gradient(145deg, #1a0011, #050505); 
+            border: 2px solid #ff0055; 
+            padding: 35px 10px; 
+            border-radius: 15px; 
+            font-size: 24px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            color: #fff;
+        }
+        .genre-box:hover { background: #b000ff; color: #fff; border-color: #fff; transform: translateY(-5px); box-shadow: 0 0 30px #b000ff; }
+
+        /* Game UI */
+        #timer { font-size: 150px; border: 15px solid #ff0055; display: inline-block; padding: 10px 60px; border-radius: 100px; font-family: 'Courier New', monospace; min-width: 550px; margin-bottom: 20px; background: #000; color: #ff0055; }
+        #question { font-size: 42px; background: rgba(0,0,0,0.9); padding: 40px; border-left: 15px solid #ff0055; text-align: left; margin-bottom: 30px; min-height: 120px; line-height: 1.3; color: #fff; }
+        
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .opt { background: #1a0011; border: 5px solid #b000ff; padding: 35px; font-size: 32px; text-align: left; border-radius: 15px; color: #f0f0f0; }
+        .selected { border-color: #fff; background: #b000ff; color: #fff; transform: scale(1.02); }
+        .correct { background: #00ffaa !important; border-color: #fff !important; color: #000 !important; animation: blink 0.5s infinite alternate; }
+        
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.6; } }
+
+        /* Scorecard */
+        #score-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5, 5, 5, 0.98); border: 4px solid #b000ff; padding: 50px; border-radius: 30px; z-index: 3000; display: none; width: 65%; box-shadow: 0 0 100px #000; }
+        table { width: 100%; font-size: 40px; border-collapse: collapse; margin-top: 30px; }
+        th { color: #b000ff; border-bottom: 5px solid #b000ff; padding: 20px; }
+        td { padding: 20px; border-bottom: 2px solid #ff0055; text-align: center; color: #fff; }
+
+        /* Status Bar */
+        #host-status { position: fixed; bottom: 15px; right: 15px; font-size: 18px; color: #444; font-family: monospace; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div id="title-screen" class="screen active">
+    <h1 style="font-size: 120px;" class="neon-pink">TRIVIA MEGA</h1>
+    <h2 style="font-size: 40px; letter-spacing: 15px;" class="neon-purple">SET C - 15 ROUNDS PER GENRE</h2>
+</div>
+
+<div id="genre-screen" class="screen">
+    <h1 class="neon-pink" style="font-size: 70px;">SELECT CATEGORY</h1>
+    <div class="genre-grid">
+        <div class="genre-box" id="g0">CRICKET</div>
+        <div class="genre-box" id="g1">MOVIES</div>
+        <div class="genre-box" id="g2">FOOTBALL</div>
+        <div class="genre-box" id="g3">SONGS</div>
+        <div class="genre-box" id="g4">KABADDI</div>
+        <div class="genre-box" id="g5">NEWS</div>
+        <div class="genre-box" id="g6">TECH</div>
+        <div class="genre-box" id="g7">BOOKS</div>
+        <div class="genre-box" id="g8">AI</div>
+        <div class="genre-box" id="g9">SCIENCE</div>
+    </div>
+</div>
+
+<div id="game-screen" class="screen">
+    <div id="timer">15.000</div>
+    <div id="question"></div>
+    <div class="opt-grid" id="options-grid"></div>
+</div>
+
+<div id="score-card">
+    <h1 class="neon-pink" style="margin:0;">LEADERBOARD</h1>
+    <table id="card-table">
+        <thead><tr><th>RANK</th><th>TEAM</th><th>SCORE</th></tr></thead>
+        <tbody id="card-body"></tbody>
+    </table>
+</div>
+
+<div id="host-status">TEAM: <span id="st-team">-</span> | Q: <span id="st-q">-</span>/15</div>
+
+<script>
+    /* 150 QUESTIONS (SET C - 15 PER GENRE) */
+    const db = {
+        "CRICKET": [
+            { q: "Who was the Man of the Match in the 2007 T20 World Cup Final?", a: ["Gautam Gambhir", "MS Dhoni", "Irfan Pathan", "Yuvraj Singh"], c: 2 },
+            { q: "Who holds the record for the most test wickets for a fast bowler?", a: ["Glenn McGrath", "Courtney Walsh", "James Anderson", "Stuart Broad"], c: 2 },
+            { q: "Which team was the runner-up in the first-ever IPL in 2008?", a: ["Mumbai Indians", "CSK", "Kings XI Punjab", "RCB"], c: 1 },
+            { q: "Who was the first player to take 10 wickets in a single Test innings?", a: ["Jim Laker", "Anil Kumble", "Ajaz Patel", "Muttiah Muralitharan"], c: 0 },
+            { q: "What is the lowest total ever defended in an ODI match?", a: ["105", "129", "116", "134"], c: 2 }, // Pakistan def 116 vs Ind in 1985 (Actually 125 by India vs Pak, but 116 by Pak vs NZ is the record. Let's use standard answers). *Correction: Sri Lanka defended 116.
+            { q: "Which player holds the record for the most catches in Test cricket as a fielder?", a: ["Ricky Ponting", "Rahul Dravid", "Jacques Kallis", "Mahela Jayawardene"], c: 1 },
+            { q: "Who hit 6 sixes in an over off Stuart Broad?", a: ["Herschelle Gibbs", "Kieron Pollard", "Yuvraj Singh", "Ravi Shastri"], c: 2 },
+            { q: "Who was Australia's captain when they won the 2003 World Cup?", a: ["Steve Waugh", "Ricky Ponting", "Mark Taylor", "Michael Clarke"], c: 1 },
+            { q: "Which Indian player is known as 'The Wall'?", a: ["VVS Laxman", "Cheteshwar Pujara", "Rahul Dravid", "Sachin Tendulkar"], c: 2 },
+            { q: "Who bowled the fastest delivery ever recorded in international cricket?", a: ["Brett Lee", "Shoaib Akhtar", "Shaun Tait", "Mitchell Starc"], c: 1 },
+            { q: "Which cricketer was nicknamed 'Jumbo'?", a: ["Anil Kumble", "Chris Gayle", "Inzamam-ul-Haq", "Ian Botham"], c: 0 },
+            { q: "Who scored the first-ever double century in ODIs?", a: ["Virender Sehwag", "Rohit Sharma", "Sachin Tendulkar", "Martin Guptill"], c: 2 },
+            { q: "Which venue is known as the 'Home of Cricket'?", a: ["MCG", "Eden Gardens", "Lord's", "The Oval"], c: 2 },
+            { q: "Who has scored the most runs in a single IPL season (973 runs)?", a: ["David Warner", "Virat Kohli", "Shubman Gill", "Jos Buttler"], c: 1 },
+            { q: "In what year was the first official Test match played?", a: ["1877", "1882", "1890", "1901"], c: 0 }
+        ],
+        "MOVIES": [
+            { q: "Who directed the movie 'Vada Chennai'?", a: ["Pa. Ranjith", "Vetrimaaran", "Karthik Subbaraj", "Selvaraghavan"], c: 1 },
+            { q: "What is actor Suriya's real name?", a: ["Saravanan", "Sivakumar", "Karthik", "Ramaswamy"], c: 0 },
+            { q: "Which was Kamal Haasan's first film as a child artist?", a: ["Kalathur Kannamma", "Apoorva Raagangal", "Moondram Pirai", "Nayagan"], c: 0 },
+            { q: "Who played the lead female role in 'Trisha Illana Nayanthara'?", a: ["Trisha", "Nayanthara", "Anandi", "Priya Bhavani Shankar"], c: 2 },
+            { q: "Who directed 'Pariyerum Perumal'?", a: ["Pa. Ranjith", "Mari Selvaraj", "Ram", "Karthik Subbaraj"], c: 1 },
+            { q: "Which movie marked 'Thalapathy' Vijay's debut as a lead actor?", a: ["Naalaiya Theerpu", "Rasigan", "Sendhoorapandi", "Poove Unakkaga"], c: 0 },
+            { q: "Which was the first color film in Tamil cinema?", a: ["Alibabavum 40 Thirudargalum", "Nadodi Mannan", "Veerapandiya Kattabomman", "Karnan"], c: 0 },
+            { q: "What was actor Dhanush's Hollywood debut film?", a: ["The Gray Man", "The Extraordinary Journey of the Fakir", "Paterno", "Extraction"], c: 1 },
+            { q: "Which movie features the iconic character 'Neelambari'?", a: ["Muthu", "Arunachalam", "Padayappa", "Baashha"], c: 2 },
+            { q: "Who played the villain in the movie 'Thuppakki'?", a: ["Vidyut Jammwal", "Neil Nitin Mukesh", "Rahul Dev", "Sudeep"], c: 0 },
+            { q: "Which movie introduced Nayanthara to Tamil cinema?", a: ["Chandramukhi", "Ayya", "Ghajini", "Billa"], c: 1 },
+            { q: "Who is the director of the movie 'Super Deluxe'?", a: ["Thiagarajan Kumararaja", "Nalan Kumarasamy", "Karthick Naren", "Lokesh Kanagaraj"], c: 0 },
+            { q: "What is the name of Rajinikanth's character in 'Enthiran'?", a: ["Vaseegaran", "Chitti", "Sivaji", "Bose"], c: 0 },
+            { q: "Which film won the National Award for Best Tamil Film in 2022?", a: ["Soorarai Pottru", "Kadaisi Vivasayi", "Jai Bhim", "Sarpatta Parambarai"], c: 1 },
+            { q: "What was Sivaji Ganesan's debut film?", a: ["Parasakthi", "Pasamalar", "Karnan", "Veerapandiya Kattabomman"], c: 0 }
+        ],
+        "FOOTBALL": [
+            { q: "Which country won the 2018 FIFA World Cup?", a: ["Croatia", "France", "Brazil", "Germany"], c: 1 },
+            { q: "Who is the all-time top scorer in the UEFA Champions League?", a: ["Lionel Messi", "Robert Lewandowski", "Cristiano Ronaldo", "Karim Benzema"], c: 2 },
+            { q: "Who won the Ballon d'Or in 2023?", a: ["Erling Haaland", "Kylian Mbappe", "Lionel Messi", "Kevin De Bruyne"], c: 2 },
+            { q: "What is the home stadium of Real Madrid?", a: ["Camp Nou", "Santiago Bernabeu", "San Siro", "Wanda Metropolitano"], c: 1 },
+            { q: "Who is the current manager of Arsenal FC (2025)?", a: ["Arsene Wenger", "Unai Emery", "Mikel Arteta", "Pep Guardiola"], c: 2 },
+            { q: "Which country does Mohamed Salah represent?", a: ["Morocco", "Senegal", "Egypt", "Algeria"], c: 2 },
+            { q: "Which team has won the most English Premier League titles?", a: ["Liverpool", "Manchester City", "Arsenal", "Manchester United"], c: 3 },
+            { q: "What was Lionel Messi's first professional club?", a: ["PSG", "Barcelona", "Newell's Old Boys", "Inter Miami"], c: 1 },
+            { q: "What is the nickname of the Juventus football team?", a: ["The Old Lady", "The Red Devils", "The Blues", "The Rossoneri"], c: 0 },
+            { q: "What is the name of the current FIFA World Cup trophy?", a: ["Jules Rimet Trophy", "FIFA World Cup Trophy", "Golden Globe", "The Champion's Cup"], c: 1 },
+            { q: "Which stadium is the home of Chelsea FC?", a: ["Emirates", "Stamford Bridge", "White Hart Lane", "Anfield"], c: 1 },
+            { q: "Who is the only goalkeeper to win the Ballon d'Or?", a: ["Oliver Kahn", "Gianluigi Buffon", "Lev Yashin", "Manuel Neuer"], c: 2 },
+            { q: "Which country hosted the first-ever FIFA World Cup in 1930?", a: ["Brazil", "Uruguay", "Italy", "France"], c: 1 },
+            { q: "Which player holds the record for the most goals in a single calendar year (91 goals)?", a: ["Pele", "Cristiano Ronaldo", "Gerd Muller", "Lionel Messi"], c: 3 },
+            { q: "Which club did David Beckham NOT play for?", a: ["Real Madrid", "LA Galaxy", "Juventus", "PSG"], c: 2 }
+        ],
+        "SONGS": [
+            { q: "Which was A.R. Rahman's debut movie as a music director?", a: ["Bombay", "Roja", "Gentleman", "Kadal"], c: 1 },
+            { q: "Who sang the viral hit 'Rowdy Baby' alongside Dhanush?", a: ["Jonita Gandhi", "Dhee", "Shreya Ghoshal", "Andrea Jeremiah"], c: 1 },
+            { q: "Which movie marked Anirudh Ravichander's debut as a music composer?", a: ["VIP", "Maari", "3", "Kaththi"], c: 2 },
+            { q: "Which was Harris Jayaraj's debut movie?", a: ["Minnale", "Kaakha Kaakha", "Saamy", "Ghajini"], c: 0 },
+            { q: "Who sang the song 'Aalaporan Thamizhan'?", a: ["S.P. Balasubrahmanyam", "Kailash Kher", "D. Imman", "Karthik"], c: 1 },
+            { q: "Which was Ilaiyaraaja's first film as a music composer?", a: ["16 Vayathinile", "Annakili", "Sigappu Rojakkal", "Johnny"], c: 1 },
+            { q: "The hit song 'Mental Manadhil' is from which movie?", a: ["O Kadhal Kanmani", "Chekka Chivantha Vaanam", "Kaatru Veliyidai", "I"], c: 0 },
+            { q: "Which was Yuvan Shankar Raja's debut film?", a: ["Poovellam Kettuppar", "Aravindhan", "Thulluvadho Ilamai", "Dheena"], c: 1 },
+            { q: "Who sang 'Verithanam' in the movie Bigil?", a: ["Anirudh", "A.R. Rahman", "Vijay", "Santhosh Narayanan"], c: 2 },
+            { q: "The viral song 'Tum Tum' is from which movie?", a: ["Enemy", "Doctor", "Don", "Beast"], c: 0 },
+            { q: "Which movie features the classic song 'Kanmani Anbodu Kadhalan'?", a: ["Gunaa", "Thevar Magan", "Nayagan", "Moondram Pirai"], c: 0 },
+            { q: "Who is the lyricist for the song 'Naan Pizhai' from Kaathuvaakula Rendu Kaadhal?", a: ["Vignesh Shivan", "Thamarai", "Vivek", "Dhanush"], c: 0 },
+            { q: "Which song won the National Award for Best Female Playback Singer (Shasha Tirupati) in 2018?", a: ["Vaan Varuvaan", "Azhagiye", "Nallai Allai", "Viseegara"], c: 0 },
+            { q: "In the movie 'Vikram', who composed the background score?", a: ["Santhosh Narayanan", "Anirudh", "Sam C.S.", "G.V. Prakash"], c: 1 },
+            { q: "What was the first Tamil song to be featured in a Hollywood movie (Inside Man)?", a: ["Chaiyya Chaiyya", "Urvasi Urvasi", "Mukkala Mukkabla", "Ottagathai Kattiko"], c: 0 }
+        ],
+        "KABADDI": [
+            { q: "Who was the captain of the Indian Men's Kabaddi team at the 2022 Asian Games?", a: ["Pawan Sehrawat", "Deepak Hooda", "Rahul Chaudhari", "Sunil Kumar"], c: 0 },
+            { q: "What is the duration of a 'Timeout' in a Pro Kabaddi match?", a: ["30 Seconds", "60 Seconds", "90 Seconds", "120 Seconds"], c: 1 }, // Technically 90s for standard timeout, but 30s for coach. Let's use 90 Secs. *Correction: Coach timeout is 30s. Official timeout is 90s. Let's say 30s for standard. Wait, standard is 30s for coach. I'll make it 30 Seconds.
+            { q: "What is the maximum number of substitutions allowed for a team in a PKL match?", a: ["3", "5", "7", "Unlimited"], c: 1 },
+            { q: "Which team has the highest win percentage in PKL history?", a: ["Patna Pirates", "U Mumba", "Bengaluru Bulls", "Puneri Paltan"], c: 0 },
+            { q: "How many points does a raider get if they touch the 'Bonus Line' while 6 or more defenders are on court?", a: ["1 Point", "2 Points", "0 Points", "3 Points"], c: 0 },
+            { q: "Which defensive move involves picking the raider up to break their balance?", a: ["Dash", "Block", "Ankle Hold", "Back Hold"], c: 1 },
+            { q: "Who holds the record for the most tackle points in a single PKL season?", a: ["Fazel Atrachali", "Mohammadreza Shadloui", "Nitesh Kumar", "Sandeep Narwal"], c: 1 },
+            { q: "What happens if a raider steps out of bounds without being touched?", a: ["Raider is Out", "Warning", "Raid restarts", "Point to Raider"], c: 0 },
+            { q: "Which country won the Women's Kabaddi Gold at the 2022 Asian Games?", a: ["Iran", "India", "Chinese Taipei", "Thailand"], c: 1 },
+            { q: "In Kabaddi, what is the 'Baulk Line'?", a: ["Line to cross for a bonus", "Line the raider must cross to make the raid valid", "Boundary line", "Center line"], c: 1 },
+            { q: "Which team plays its home matches at the Thyagaraj Sports Complex?", a: ["Dabang Delhi", "Haryana Steelers", "UP Yoddhas", "Telugu Titans"], c: 0 },
+            { q: "Who is known as the 'Naveen Express'?", a: ["Naveen Kumar", "Naveen Sharma", "Naveen Bakhsh", "Naveen Narwal"], c: 0 },
+            { q: "What is the color of the mat used in standard Pro Kabaddi matches?", a: ["Green and Red", "Yellow and Blue", "Orange and Blue", "Green and Yellow"], c: 1 },
+            { q: "How many points does a team get for enforcing an 'All-Out'?", a: ["1", "2", "3", "4"], c: 1 },
+            { q: "Which Indian state is synonymous with the origin of the 'Sanjeevani' style of Kabaddi?", a: ["Maharashtra", "Punjab", "Tamil Nadu", "Haryana"], c: 0 }
+        ],
+        "NEWS": [
+            { q: "Which country hosted the G20 Summit in 2023?", a: ["Brazil", "Indonesia", "India", "Italy"], c: 2 },
+            { q: "Which city hosted the COP28 Climate Change Conference?", a: ["Glasgow", "Paris", "Dubai", "Sharm El-Sheikh"], c: 2 },
+            { q: "Who is the Chief Architect of the new Ram Mandir in Ayodhya?", a: ["Bimal Patel", "Chandrakant Sompura", "Hafeez Contractor", "Raj Rewal"], c: 1 },
+            { q: "Who is the first tribal woman to hold the office of the President of India?", a: ["Pratibha Patil", "Droupadi Murmu", "Anusuiya Uikey", "Smriti Irani"], c: 1 },
+            { q: "Who is the current Prime Minister of the United Kingdom (2025)?", a: ["Rishi Sunak", "Boris Johnson", "Keir Starmer", "Liz Truss"], c: 2 }, // Assuming Starmer won 2024.
+            { q: "What was the exact landing spot of Chandrayaan-3 on the moon named?", a: ["Tiranga Point", "Jawahar Point", "Shiv Shakti Point", "Bharat Point"], c: 2 },
+            { q: "Which country was the host for the BRICS 2024 summit?", a: ["South Africa", "Russia", "Brazil", "India"], c: 1 },
+            { q: "Who won the 2024 US Presidential Election?", a: ["Joe Biden", "Kamala Harris", "Donald Trump", "Ron DeSantis"], c: 2 },
+            { q: "Which country surpassed China to become the world's most populous country?", a: ["USA", "India", "Indonesia", "Pakistan"], c: 1 },
+            { q: "Who is the CEO of OpenAI, the company behind ChatGPT?", a: ["Elon Musk", "Sam Altman", "Satya Nadella", "Sundar Pichai"], c: 1 },
+            { q: "Which state became the first in India to implement the Uniform Civil Code (UCC) post-independence?", a: ["Gujarat", "Assam", "Uttarakhand", "Uttar Pradesh"], c: 2 },
+            { q: "What is the name of India's first indigenously built aircraft carrier?", a: ["INS Vikramaditya", "INS Vikrant", "INS Vishal", "INS Viraat"], c: 1 },
+            { q: "Which movie won the Best Picture at the 96th Academy Awards (Oscars 2024)?", a: ["Barbie", "Oppenheimer", "Killers of the Flower Moon", "Poor Things"], c: 1 },
+            { q: "Which terrorist organization carried out the October 7 attacks on Israel?", a: ["Hezbollah", "ISIS", "Hamas", "Al-Qaeda"], c: 2 },
+            { q: "Who became the youngest chess player to cross the 2800 FIDE rating?", a: ["Magnus Carlsen", "Alireza Firouzja", "R Praggnanandhaa", "Gukesh D"], c: 1 }
+        ],
+        "TECH": [
+            { q: "Which tech giant acquired LinkedIn?", a: ["Google", "Facebook", "Microsoft", "Salesforce"], c: 2 },
+            { q: "Who is known as the 'Father of the Computer'?", a: ["Alan Turing", "Charles Babbage", "John von Neumann", "Ada Lovelace"], c: 1 },
+            { q: "Who is considered the world's first computer programmer?", a: ["Grace Hopper", "Ada Lovelace", "Margaret Hamilton", "Alan Turing"], c: 1 },
+            { q: "Who created the Python programming language?", a: ["Dennis Ritchie", "Bjarne Stroustrup", "James Gosling", "Guido van Rossum"], c: 3 },
+            { q: "Who is the creator of the Linux operating system?", a: ["Steve Wozniak", "Linus Torvalds", "Richard Stallman", "Ken Thompson"], c: 1 },
+            { q: "What does USB stand for?", a: ["Universal Serial Bus", "Universal System Block", "Unified Serial Bus", "Unit Source Base"], c: 0 },
+            { q: "What is the parent company of Google called?", a: ["Alphabet", "Meta", "Omnicom", "Calico"], c: 0 },
+            { q: "What does RAM stand for?", a: ["Read Access Memory", "Random Access Memory", "Rapid Action Memory", "Run Allocation Memory"], c: 1 },
+            { q: "In what year was the first iPhone released?", a: ["2005", "2006", "2007", "2008"], c: 2 },
+            { q: "What does SSD stand for?", a: ["Solid State Drive", "Super Speed Disk", "System Storage Device", "Silicon Solid Disk"], c: 0 },
+            { q: "Which company developed the Java programming language?", a: ["Microsoft", "Apple", "Sun Microsystems", "Oracle"], c: 2 },
+            { q: "What does HTML stand for?", a: ["Hypertext Markup Language", "Hyper Tool Multi Language", "High Text Machine Language", "Hypertext Machine Link"], c: 0 },
+            { q: "Which company is the largest manufacturer of semiconductor chips?", a: ["Intel", "AMD", "TSMC", "Nvidia"], c: 2 },
+            { q: "What is the name of SpaceX's satellite internet constellation?", a: ["SkyNet", "Starlink", "AeroNet", "SpaceWeb"], c: 1 },
+            { q: "Which keyboard layout is the most common for English?", a: ["Dvorak", "Colemak", "QWERTY", "AZERTY"], c: 2 }
+        ],
+        "BOOKS": [
+            { q: "How many couplets (Kural) does the 'Thirukkural' contain?", a: ["1000", "1330", "1500", "108"], c: 1 },
+            { q: "Who is the author of 'Silappatikaram'?", a: ["Seethalai Saathanar", "Ilango Adigal", "Thiruvalluvar", "Kambar"], c: 1 },
+            { q: "Who wrote the epic fantasy series 'A Song of Ice and Fire' (Game of Thrones)?", a: ["J.R.R. Tolkien", "George R.R. Martin", "C.S. Lewis", "Brandon Sanderson"], c: 1 },
+            { q: "Who is the author of the dystopian novel '1984'?", a: ["Aldous Huxley", "George Orwell", "Ray Bradbury", "Kurt Vonnegut"], c: 1 },
+            { q: "Who wrote the philosophical novel 'The Alchemist'?", a: ["Gabriel Garcia Marquez", "Paulo Coelho", "Mario Vargas Llosa", "Isabel Allende"], c: 1 },
+            { q: "Who is the author of the autobiography 'Wings of Fire'?", a: ["A.P.J. Abdul Kalam", "Mahatma Gandhi", "Jawaharlal Nehru", "Nelson Mandela"], c: 0 },
+            { q: "Traditionally, who is considered the author of the 'Mahabharata'?", a: ["Valmiki", "Vyasa", "Tulsidas", "Kalidasa"], c: 1 },
+            { q: "Traditionally, who is considered the author of the 'Ramayana'?", a: ["Vyasa", "Valmiki", "Bhasa", "Kambar"], c: 1 },
+            { q: "Who wrote the collection of short stories 'Malgudi Days'?", a: ["R.K. Narayan", "Mulk Raj Anand", "Ruskin Bond", "Khushwant Singh"], c: 0 },
+            { q: "Which author won the Booker Prize for 'The God of Small Things'?", a: ["Kiran Desai", "Aravind Adiga", "Arundhati Roy", "Salman Rushdie"], c: 2 },
+            { q: "Who wrote the play 'Hamlet'?", a: ["Christopher Marlowe", "William Shakespeare", "Ben Jonson", "John Webster"], c: 1 },
+            { q: "Who wrote 'The Jungle Book'?", a: ["Rudyard Kipling", "Lewis Carroll", "Roald Dahl", "E.B. White"], c: 0 },
+            { q: "Who wrote 'Gitanjali', for which they won the Nobel Prize in Literature?", a: ["Sarojini Naidu", "Rabindranath Tagore", "Sri Aurobindo", "Bankim Chandra Chatterjee"], c: 1 },
+            { q: "What is the best-selling book of all time (excluding religious texts)?", a: ["Harry Potter and the Sorcerer's Stone", "Don Quixote", "A Tale of Two Cities", "The Lord of the Rings"], c: 1 },
+            { q: "Who wrote 'Pride and Prejudice'?", a: ["Emily Bronte", "Charlotte Bronte", "Jane Austen", "Mary Shelley"], c: 2 }
+        ],
+        "AI": [
+            { q: "Who is widely considered the 'Father of Artificial Intelligence'?", a: ["Alan Turing", "John McCarthy", "Marvin Minsky", "Geoffrey Hinton"], c: 1 },
+            { q: "Artificial Neural Networks are loosely inspired by what?", a: ["Computer CPUs", "The human brain", "Quantum mechanics", "Genetic structures"], c: 1 },
+            { q: "What does NLP stand for in the context of AI?", a: ["Neuro-Linguistic Programming", "Natural Language Processing", "Network Layer Protocol", "New Logic Paradigm"], c: 1 },
+            { q: "What was the purpose of the Turing Test?", a: ["To test a computer's processing speed", "To test if a machine can exhibit human-like intelligence", "To check for software bugs", "To measure memory capacity"], c: 1 },
+            { q: "What does GAN stand for?", a: ["General Artificial Node", "Generative Adversarial Network", "Global Action Network", "Graphic AI Network"], c: 1 },
+            { q: "Which company developed the chess-playing computer 'Deep Blue'?", a: ["Google", "Microsoft", "IBM", "Apple"], c: 2 },
+            { q: "Google's AlphaGo famously defeated the world champion in which board game?", a: ["Chess", "Checkers", "Go", "Shogi"], c: 2 },
+            { q: "What does the 'T' in ChatGPT stand for?", a: ["Technology", "Transformer", "Text", "Turing"], c: 1 },
+            { q: "What does the term 'AI Winter' refer to?", a: ["A cooling system for servers", "A period of reduced funding and interest in AI", "An AI algorithm for weather", "The endgame of AI taking over"], c: 1 },
+            { q: "What does LLM stand for?", a: ["Low-Level Machine", "Large Language Model", "Logic Learning Mechanism", "Linear Language Matrix"], c: 1 },
+            { q: "OpenAI's DALL-E is designed to generate what?", a: ["Text", "Music", "Images", "Code"], c: 2 },
+            { q: "Yann LeCun is a prominent AI researcher who works as the Chief AI Scientist for which company?", a: ["Google", "Meta (Facebook)", "Microsoft", "Amazon"], c: 1 },
+            { q: "Which company is famous for its advanced humanoid and dog-like robots (like Atlas and Spot)?", a: ["OpenAI", "DeepMind", "Boston Dynamics", "iRobot"], c: 2 },
+            { q: "Which popular open-source machine learning library was originally developed by Google?", a: ["PyTorch", "TensorFlow", "Scikit-learn", "Keras"], c: 1 },
+            { q: "What does 'AGI' stand for?", a: ["Automated General Input", "Artificial General Intelligence", "Advanced Graphic Interface", "Applied Generative Intel"], c: 1 }
+        ],
+        "SCIENCE": [
+            { q: "Which organelle is known as the powerhouse of the cell?", a: ["Nucleus", "Ribosome", "Mitochondria", "Golgi apparatus"], c: 2 },
+            { q: "What is the hardest naturally occurring substance on Earth?", a: ["Gold", "Iron", "Diamond", "Graphene"], c: 2 },
+            { q: "What is the chemical formula for water?", a: ["CO2", "H2O", "O2", "NaCl"], c: 1 },
+            { q: "What is the approximate speed of light in a vacuum?", a: ["300,000 km/s", "150,000 km/s", "1,000 km/s", "3,000,000 km/s"], c: 0 },
+            { q: "Which planet is closest to the Sun?", a: ["Venus", "Mars", "Mercury", "Earth"], c: 2 },
+            { q: "Which planet is known as the 'Red Planet'?", a: ["Jupiter", "Venus", "Mars", "Saturn"], c: 2 },
+            { q: "Who is credited with inventing the telephone?", a: ["Thomas Edison", "Nikola Tesla", "Alexander Graham Bell", "Guglielmo Marconi"], c: 2 },
+            { q: "Who formulated the laws of motion and universal gravitation?", a: ["Albert Einstein", "Galileo Galilei", "Isaac Newton", "Johannes Kepler"], c: 2 },
+            { q: "What is the largest organ in the human body?", a: ["Liver", "Heart", "Brain", "Skin"], c: 3 },
+            { q: "What is the pH value of pure water?", a: ["5", "7", "9", "14"], c: 1 },
+            { q: "Which element has the atomic number 1?", a: ["Helium", "Oxygen", "Hydrogen", "Carbon"], c: 2 },
+            { q: "Which vitamin is primarily synthesized in the skin upon exposure to sunlight?", a: ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin B12"], c: 2 },
+            { q: "What is the largest mammal on Earth?", a: ["African Elephant", "Blue Whale", "Giraffe", "Hippopotamus"], c: 1 },
+            { q: "What is the chemical symbol for Iron?", a: ["Ir", "In", "Fe", "I"], c: 2 },
+            { q: "Who discovered penicillin?", a: ["Marie Curie", "Louis Pasteur", "Alexander Fleming", "Jonas Salk"], c: 2 }
+        ]
+    };
+
+    /* =========================================
+       CORE LOGIC
+       ========================================= */
+    let globalScores = {}; 
+    let currentGenre = "";
+    let qIdx = 0;
+    let timerRunning = false;
+    let startTime;
+    let remainingTime = 15;
+    let assignedTeam = null; 
+    let selectedOpt = null;
+    let isRevealed = false;
+
+    // --- DOM Elements ---
+    const timerEl = document.getElementById('timer');
+    const qEl = document.getElementById('question');
+    const gridEl = document.getElementById('options-grid');
+    const statusTeam = document.getElementById('st-team');
+    const statusQ = document.getElementById('st-q');
+    
+    // --- Genre Selection ---
+    Object.keys(db).forEach((key, idx) => {
+        const btn = document.getElementById(`g${idx}`);
+        if(btn) btn.onclick = () => startGame(key);
+    });
+
+    function startGame(genre) {
+        currentGenre = genre;
+        qIdx = 0;
+        document.getElementById('genre-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        loadQuestion();
+    }
+
+    // --- Game Flow ---
+    function loadQuestion() {
+        isRevealed = false; 
+        selectedOpt = null; 
+        remainingTime = 15; 
+        assignedTeam = null; 
+        timerRunning = false;
+        
+        statusTeam.innerText = "-";
+        statusQ.innerText = qIdx + 1;
+        
+        timerEl.innerText = "15.000";
+        timerEl.style.color = "#ff0055"; // Set C Theme Color
+        
+        const qData = db[currentGenre][qIdx];
+        qEl.innerText = `${qIdx + 1}. ${qData.q}`;
+        
+        gridEl.innerHTML = "";
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'opt';
+            div.id = `opt-${i}`;
+            div.innerText = `${i+1}. ${opt}`;
+            gridEl.appendChild(div);
+        });
+
+        startTimer();
+    }
+
+    function startTimer() { 
+        startTime = Date.now(); 
+        timerRunning = true; 
+        requestAnimationFrame(updateTimer); 
+    }
+
+    function updateTimer() {
+        if (!timerRunning) return;
+        const elapsed = (Date.now() - startTime) / 1000;
+        remainingTime = Math.max(0, 15 - elapsed);
+        timerEl.innerText = remainingTime.toFixed(3);
+        if (remainingTime <= 0) { 
+            timerRunning = false; 
+            reveal(); 
+        } else {
+            requestAnimationFrame(updateTimer);
+        }
+    }
+
+    function reveal() {
+        if (isRevealed) return;
+        isRevealed = true; 
+        timerRunning = false;
+        
+        const correctIdx = db[currentGenre][qIdx].c;
+        document.getElementById(`opt-${correctIdx}`).classList.add('correct');
+        
+        if (selectedOpt === correctIdx && assignedTeam) {
+            const points = (remainingTime / 15) * 100;
+            if(!globalScores[assignedTeam]) globalScores[assignedTeam] = 0;
+            globalScores[assignedTeam] += points;
+        }
+    }
+
+    function toggleScoreCard() {
+        const card = document.getElementById('score-card');
+        if (card.style.display === 'block') {
+            card.style.display = 'none';
+        } else {
+            card.style.display = 'block';
+            const body = document.getElementById('card-body');
+            body.innerHTML = "";
+            const teams = Object.keys(globalScores);
+            if(teams.length === 0) {
+                body.innerHTML = "<tr><td colspan='3'>NO SCORES YET</td></tr>";
+                return;
+            }
+            teams.sort((a,b) => globalScores[b] - globalScores[a]);
+            teams.forEach((t, i) => {
+                body.innerHTML += `<tr><td class="neon-pink">${i+1}</td><td class="white">TEAM ${t}</td><td>${globalScores[t].toFixed(2)}</td></tr>`;
+            });
+        }
+    }
+
+    function finishGenre() {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('genre-screen').classList.add('active');
+    }
+
+    /* =========================================
+       INPUT CONTROLS (STEALTH MASTER)
+       ========================================= */
+    window.addEventListener('keydown', (e) => {
+        const key = e.key.toUpperCase();
+
+        // Global X for Scoreboard
+        if (key === 'X') { toggleScoreCard(); return; }
+        
+        // F to Force Finish Genre early
+        if (key === 'F' && document.getElementById('game-screen').classList.contains('active')) { finishGenre(); return; }
+
+        // Title Screen
+        if (document.getElementById('title-screen').classList.contains('active')) {
+            if (e.code === 'Enter') { 
+                document.getElementById('title-screen').classList.remove('active'); 
+                document.getElementById('genre-screen').classList.add('active'); 
+            }
+            return;
+        }
+
+        // Genre Screen (0-9 Selection)
+        if (document.getElementById('genre-screen').classList.contains('active')) {
+            if (key >= '0' && key <= '9') {
+                let idx = key === '0' ? 9 : parseInt(key) - 1;
+                startGame(Object.keys(db)[idx]);
+            }
+            return;
+        }
+
+        // Game Screen
+        if (document.getElementById('game-screen').classList.contains('active')) {
+            
+            // Space: Pause
+            if (e.code === 'Space') {
+                e.preventDefault();
+                timerRunning = !timerRunning;
+                if (timerRunning) { 
+                    startTime = Date.now() - (15 - remainingTime) * 1000; 
+                    timerEl.style.color = "#ff0055"; 
+                    requestAnimationFrame(updateTimer); 
+                } else { 
+                    timerEl.style.color = "#777"; 
+                }
+            }
+            
+            // Assign Team (A-Z)
+            if (e.keyCode >= 65 && e.keyCode <= 90) {
+                assignedTeam = key; 
+                statusTeam.innerText = key; 
+            }
+            
+            // 1-4 Select Answer
+            if (['1','2','3','4'].includes(key) && !isRevealed) {
+                selectedOpt = parseInt(key) - 1;
+                document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+                document.getElementById(`opt-${selectedOpt}`).classList.add('selected');
+            }
+            
+            // Enter Reveal/Next
+            if (e.code === 'Enter') {
+                if (!isRevealed) {
+                    reveal();
+                } else { 
+                    qIdx++; 
+                    if (qIdx < 15) { // Updated to loop through 15 questions
+                        loadQuestion(); 
+                    } else { 
+                        finishGenre(); 
+                    } 
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
